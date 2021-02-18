@@ -105,9 +105,15 @@ add_library(mylib STATIC
 )
 target_link_libraries(mylib PRIVATE printname)
 
+# API layer
+add_library(api SHARED
+  api.hpp
+)
+target_link_libraries(api PUBLIC mylib)
+
 # Executable
 add_executable(Test
   main.cpp
 )
 
-target_link_libraries(Test PUBLIC mylib)
+target_link_libraries(Test PRIVATE api)
