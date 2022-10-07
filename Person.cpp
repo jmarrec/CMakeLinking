@@ -1,15 +1,11 @@
 #include "Person.hpp"
 #include "printname.hpp"
 #include <iostream>
+#include <utility>
 
 namespace Test {
 
-Person::Person(const std::string& t_name) noexcept
-  : m_name(t_name) { }
-
-Person::Person(const Person& other)
-  : m_name(other.m_name) { }
-
+Person::Person(std::string t_name) noexcept : m_name(std::move(t_name)) {}
 
 std::string Person::getName() const {
   return m_name;
@@ -25,5 +21,4 @@ std::ostream& operator<<(std::ostream& os, const Test::Person& p) {
   return os;
 }
 
-
-} // namespace Test
+}  // namespace Test

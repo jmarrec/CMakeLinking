@@ -5,21 +5,20 @@
 
 namespace Test {
 
-class Person {
-  public:
+class Person
+{
+ public:
+  Person(std::string name) noexcept;
 
-    Person(const std::string& name) noexcept;
+  std::string getName() const;
+  bool setName(const std::string& t_newName);
 
-    Person(const Person& other);
-
-    std::string getName() const;
-    bool setName(const std::string& t_newName);
-  private:
-    std::string m_name;
+ private:
+  std::string m_name;
 };
 
 std::ostream& operator<<(std::ostream&, const Test::Person&);
 
-} // Namespace Test
+}  // Namespace Test
 
-#endif // ifndef PERSON_HPP
+#endif  // ifndef PERSON_HPP

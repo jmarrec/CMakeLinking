@@ -103,7 +103,7 @@ add_library(mylib STATIC
   Person.hpp
   Person.cpp
 )
-target_link_libraries(mylib PRIVATE printname)
+target_link_libraries(printname PRIVATE mylib)
 
 # API layer
 add_library(api SHARED
@@ -116,4 +116,24 @@ add_executable(Test
   main.cpp
 )
 
-target_link_libraries(Test PRIVATE api)
+if(APPLE)
+  # This works:
+  set_target_properties(Test PROPERTIES
+  #  # MACOSX_RPATH ON
+  INSTALL_RPATH "@executable_path;@executable_path/../lib"
+  #  INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" -> points to /usr/local/lib when I don't change CMAKE_INSTALL_PREFIX
+  #  # INSTALL_RPATH_USE_LINK_PATH TRUE
+  )
+
+elseif(UNIX)
+  set_target_properties(Test PROPERTIES
+    INSTALL_RPATH "$ORIGIN:$ORIGIN/../EnergyPlus")
+endif()
+
+target_link_libraries(Test PRIVATE api printname)
+
+install(TARGETS Test DESTINATION bin)
+install(TARGETS printname DESTINATION lib)
+install(TARGETS api DESTINATION lib)
+
+include(CPack)
