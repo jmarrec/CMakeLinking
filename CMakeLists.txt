@@ -162,12 +162,18 @@ add_executable(Test
 if(APPLE)
   # This works:
   set_target_properties(Test PROPERTIES
-  #  # MACOSX_RPATH ON
-  INSTALL_RPATH "@executable_path;@executable_path/../lib/"
-  #  INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" -> points to /usr/local/lib when I don't change CMAKE_INSTALL_PREFIX
-  #  # INSTALL_RPATH_USE_LINK_PATH TRUE
+    #  # MACOSX_RPATH ON
+    INSTALL_RPATH "@executable_path;@executable_path/../lib/"
+    #  INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" -> points to /usr/local/lib when I don't change CMAKE_INSTALL_PREFIX
+    #  # INSTALL_RPATH_USE_LINK_PATH TRUE
   )
-
+  set_target_properties(api PROPERTIES
+    #  # MACOSX_RPATH ON
+    INSTALL_RPATH "@loader_path"
+  )
+  install(CODE [[
+    execute_process(COMMAND "install_name_tool" -change "$<TARGET_FILE:Python::Python>" "@loader_path/$<TARGET_FILE_NAME:Python::Python>" "$<TARGET_FILE:api>")
+  ]])
 elseif(UNIX)
   set_target_properties(Test PROPERTIES
     INSTALL_RPATH "$ORIGIN:$ORIGIN/../lib/")
