@@ -108,6 +108,7 @@ target_link_libraries(printname PRIVATE mylib)
 # API layer
 add_library(api SHARED
   api.hpp
+  api.cpp
 )
 target_link_libraries(api PUBLIC mylib)
 
