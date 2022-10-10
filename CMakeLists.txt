@@ -112,7 +112,7 @@ add_library(api SHARED
 )
 target_link_libraries(api PUBLIC mylib)
 
-set(Python_USE_STATIC_LIBS ON)
+set(Python_USE_STATIC_LIBS OFF)
 find_package(Python 3.8 EXACT COMPONENTS Interpreter Development REQUIRED)
 message("Python_LIBRARIES=${Python_LIBRARIES}")
 
@@ -144,8 +144,12 @@ else()
   get_target_property(PYTHON_LIB_TYPE Python::Python TYPE)
   message("PYTHON_LIB_TYPE=${PYTHON_LIB_TYPE}")
   if(NOT PYTHON_LIB_TYPE STREQUAL STATIC_LIBRARY)
-    message(FATAL_ERROR "We expect to find a static libpython on Unix")
+    #  message(FATAL_ERROR "We expect to find a static libpython on Unix")
   endif()
+  # Does NOT follow symlinks. Works fine on windows and mac, but on windows it ships a libpython3.8.so which is just a symlink
+  install(IMPORTED_RUNTIME_ARTIFACTS Python::Python LIBRARY DESTINATION lib)
+  install(FILES ${RESOLVED_PYTHON_LIBRARY} DESTINATION lib)
+
 endif()
 
 target_link_libraries(api PRIVATE Python::Python)
@@ -167,6 +171,9 @@ if(APPLE)
 elseif(UNIX)
   set_target_properties(Test PROPERTIES
     INSTALL_RPATH "$ORIGIN:$ORIGIN/../lib/")
+
+  set_target_properties(api PROPERTIES
+    INSTALL_RPATH "$ORIGIN")
 endif()
 
 target_link_libraries(Test PRIVATE api printname)
